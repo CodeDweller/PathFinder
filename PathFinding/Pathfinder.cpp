@@ -56,9 +56,20 @@ std::unique_ptr<Pathfinder::Node>& Pathfinder::Astar::FindNodeInList(uint32_t xC
 	return *it;
 }
 
-bool Pathfinder::Astar::IsBetterPath(Node& node)
+bool Pathfinder::Astar::IsBetterPath(Node& node, Node& currentNode)
 {
-
+	uint32_t oldCost = node.GetG();
+	std::unique_ptr<Pathfinder::Node>& oldParent = node.GetParent();
+	node.ChangeParent(currentNode);
+	if (oldCost < node.GetG())
+	{
+#ifdef DEBUG
+		std::cout << "Returning old parent!";
+#endif
+		node.ChangeParent(*oldParent); // Return old parent
+		return true;
+	}	
+	return false;
 }
 
 //bool Pathfinder::Astar::NodeComparison(std::unique_ptr<Pathfinder::Node>& node, std::tuple<uint32_t, uint32_t> position)
@@ -117,26 +128,31 @@ int Pathfinder::Astar::FindPath
 			else
 			{
 				// If on already on the open list, check for better path through current node
-				uint32_t newCost = openNode->GetParent()->GetG();
-
+				if (IsBetterPath(*openNode))
+				{
+					openNode->ChangeParent(*newCurrent);
+				}
 			}
 		}
+
 		if (pMap[InputMapLocation(xCoord, yCoord + 1, nMapHeight)] != 0 && (FindNodeInList(xCoord, yCoord + 1, closed) != nullptr))
 		{
 			std::unique_ptr<Pathfinder::Node> newNode(new Pathfinder::Node(xCoord, yCoord + 1, *finishNode, newCurrent, closed.size()));
 
 		}
+
 		if (pMap[InputMapLocation(xCoord - 1, yCoord, nMapHeight)] != 0 && FindNodeInList(xCoord - 1, yCoord, closed))
 		{
 			std::unique_ptr<Pathfinder::Node> newNode(new Pathfinder::Node(xCoord - 1, yCoord, *finishNode, newCurrent, closed.size()));
 
 		}
+
 		if (pMap[InputMapLocation(xCoord + 1, yCoord, nMapHeight)] != 0 && FindNodeInList(xCoord + 1, yCoord, closed))
 		{
 			std::unique_ptr<Pathfinder::Node> newNode(new Pathfinder::Node(xCoord + 1, yCoord, *finishNode, newCurrent, closed.size()));
 
 		}
-		// If already on open list, check to see if this path to that square is better, using G
+
 	}
 
 }

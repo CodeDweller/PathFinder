@@ -26,7 +26,7 @@ namespace Pathfinder
 		//bool FindInOpen(Node& node);
 		//bool FindInClosed(uint32_t xCoord, uint32_t yCoord);
 		std::unique_ptr<Pathfinder::Node>& FindNodeInList(uint32_t xCoord, uint32_t yCoord, std::vector<std::unique_ptr<Pathfinder::Node>>& searchVector);
-		bool IsBetterPath(Node& node);
+		bool IsBetterPath(Node& node, Node& currentNode);
 		//bool NodeComparison(std::unique_ptr<Pathfinder::Node>& node, std::tuple<uint32_t, uint32_t> position); // Find_if compare function
 		uint8_t NumOfClosed();
 		uint16_t InputMapLocation(uint32_t xCoord, uint32_t yCoord, const int nMapHeight);
